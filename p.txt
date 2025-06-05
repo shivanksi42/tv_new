@@ -1,0 +1,32 @@
+@app.post("/analyze-menu", response_model=ProcessedData)
+async def analyze_menu_data(api_response: Dict[str, Any]):
+    """
+    Analyze menu data from external API response.
+    
+    This endpoint:
+    1. Extracts variant IDs and menu item IDs
+    2. Groups items by restaurant (venue_id)
+    3. Calculates missing items statistics
+    4. Returns items not offered by all restaurants with percentages
+    """
+    try:
+        global analyzer
+        analyzer = MenuAnalyzer()
+        
+        extracted_variants = analyzer.extract_variant_data(api_response)
+        
+        if not extracted_variants:
+            raise HTTPException(status_code=400, detail="No variants found in the API response")
+        
+        analyzer.group_items_by_restaurant()
+        
+        missing_items = analyzer.calculate_missing_items_analysis()
+        
+        return ProcessedData(
+            total_variants=len(extracted_variants),
+            total_restaurants=len(analyzer.restaurant_items),
+            missing_items=missing_items
+        )
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error processing data: {str(e)}")
