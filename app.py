@@ -12,19 +12,16 @@ from concurrent.futures import ThreadPoolExecutor
 import threading
 from functools import lru_cache
 
-# Load environment variables from .env file
 load_dotenv()
 
-# API Configuration from environment variables
 BACKEND_BASE_URL = os.getenv("BACKEND_BASE_URL", "https://api.staging.tracevenue.com")
 FILTERED_VARIANTS_ENDPOINT = os.getenv("FILTERED_VARIANTS_ENDPOINT", "api/v1/traceVenue/variant/filteredVariants")
 
 app = FastAPI(title="Restaurant Menu Analysis API", version="1.0.0")
 
-# Global cache for results
 _cache = {}
 _cache_lock = threading.Lock()
-CACHE_TTL = 300  # 5 minutes cache TTL
+CACHE_TTL = 300  
 
 class AnalysisResult(BaseModel):
     item_id: str
