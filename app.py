@@ -10,7 +10,6 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 import logging
 
-# Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -33,7 +32,7 @@ class ProcessedData(BaseModel):
     total_restaurants: int
     missing_items: List[AnalysisResult]
     processing_time: float
-    debug_info: Dict[str, Any] = {}
+    
 
 class OptimizedMenuAnalyzer:
     def __init__(self):
@@ -151,15 +150,7 @@ async def process_data_async(api_response: Dict[str, Any]) -> ProcessedData:
         
         processing_time = round(time.time() - start_time, 3)
         
-        # Debug information
-        debug_info = {
-            "api_response_keys": list(api_response.keys()),
-            "variants_in_response": len(api_response.get("variants", [])),
-            "total_unique_items": len(analyzer.all_items),
-            "restaurants_with_items": len(analyzer.restaurant_items),
-            "sample_restaurant_items": dict(list(analyzer.restaurant_items.items())[:2]) if analyzer.restaurant_items else {},
-            "sample_items": list(analyzer.all_items)[:5] if analyzer.all_items else []
-        }
+       
         
         return ProcessedData(
             total_variants=total_variants,
@@ -245,6 +236,8 @@ async def fetch_and_analyze_with_filters(filters: Dict[str, Any] = None):
     except Exception as e:
         logger.error(f"Processing error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error processing fetched data: {str(e)}")
+
+
 
 @app.get("/debug/test-data-structure")
 async def test_data_structure(query_params: Optional[str] = None):
