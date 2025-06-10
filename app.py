@@ -157,7 +157,6 @@ async def process_data_async(api_response: Dict[str, Any]) -> ProcessedData:
             total_restaurants=total_restaurants,
             missing_items=missing_items,
             processing_time=processing_time,
-            debug_info=debug_info
         )
     
     loop = asyncio.get_event_loop()
